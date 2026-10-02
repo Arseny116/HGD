@@ -1,0 +1,6 @@
+@MiroIntegration_HostAddress = http://localhost:5017
+
+GET {{MiroIntegration_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
