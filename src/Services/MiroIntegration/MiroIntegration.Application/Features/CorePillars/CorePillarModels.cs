@@ -5,30 +5,30 @@ using MiroIntegration.Application.Abstractions;
 using MiroIntegration.Domain.Models;
 using System.Text.Json;
 
-namespace MiroIntegration.Application.Features.CorePillars;
+namespace MiroIntegration.Application.Features.Projects;
 
-public sealed record CreateCorePillarCommand(string Name, object? CorePillars) : IRequest<CorePillarResponse>;
-public sealed record CorePillarResponse(Guid Id, string Name, IReadOnlyCollection<string> Pillars, string? PdfPath, DateTimeOffset CreatedAt);
+public sealed record CreateProjectCommand(string Name, object? Projects) : IRequest<ProjectResponse>;
+public sealed record ProjectResponse(Guid Id, string Name, IReadOnlyCollection<string> Pillars, string? PdfPath, DateTimeOffset CreatedAt);
 
-public sealed class CreateCorePillarValidator : AbstractValidator<CreateCorePillarCommand>
+public sealed class CreateProjectValidator : AbstractValidator<CreateProjectCommand>
 {
-    public CreateCorePillarValidator()
+    public CreateProjectValidator()
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
-        RuleFor(x => x.CorePillars).NotNull();
+        RuleFor(x => x.Projects).NotNull();
     }
 }
 
-public sealed class CorePillarMappingProfile : Profile
+public sealed class ProjectMappingProfile : Profile
 {
-    public CorePillarMappingProfile() => CreateMap<CorePillar, CorePillarResponse>();
+    public ProjectMappingProfile() => CreateMap<Project, ProjectResponse>();
 }
 
-public sealed class CreateCorePillarHandler(ICorePillarRepository repository, IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<CreateCorePillarCommand, CorePillarResponse>
+public sealed class CreateProjectHandler(IProjectRepository repository, IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<CreateProjectCommand, ProjectResponse>
 {
-    public async Task<CorePillarResponse> Handle(CreateCorePillarCommand request, CancellationToken cancellationToken)
+    public async Task<ProjectResponse> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
-        var values = request.CorePillars switch
+        var values = request.Projects switch
         {
             string text => text.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
             JsonElement json when json.ValueKind == JsonValueKind.String => json.GetString()?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) ?? [],
@@ -36,9 +36,9 @@ public sealed class CreateCorePillarHandler(ICorePillarRepository repository, IU
             IEnumerable<object> items => items.Select(x => x?.ToString()?.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).Cast<string>(),
             _ => []
         };
-        var entity = new CorePillar(request.Name.Trim(), values.ToList());
+        var entity = new Project(request.Name.Trim(), values.ToList());
         await repository.AddAsync(entity, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
-        return mapper.Map<CorePillarResponse>(entity);
+        return mapper.Map<ProjectResponse>(entity);
     }
 }

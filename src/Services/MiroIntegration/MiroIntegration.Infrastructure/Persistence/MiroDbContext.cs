@@ -10,7 +10,9 @@ public sealed class MiroDbContext(DbContextOptions<MiroDbContext> options): DbCo
         options.UseSqlite(); //строка
     }
     public DbSet<User> Users => Set<User>();
-    public DbSet<CorePillar> CorePillars => Set<CorePillar>();
+    public DbSet<Project> Projects => Set<Project>();
+
+    public DbSet<Pdf> Pdfs => Set<Pdf>();
 
     
 }

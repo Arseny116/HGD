@@ -11,8 +11,10 @@ public sealed class UserRepository(MiroDbContext db) : IUserRepository
     public Task AddAsync(User user, CancellationToken cancellationToken) => db.Users.AddAsync(user, cancellationToken).AsTask();
 }
 
-public sealed class CorePillarRepository(MiroDbContext db) : ICorePillarRepository
+public sealed class ProjectRepository(MiroDbContext db) : IProjectRepository
 {
-    public Task<CorePillar?> FindByIdAsync(Guid id, CancellationToken cancellationToken) => db.CorePillars.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
-    public Task AddAsync(CorePillar corePillar, CancellationToken cancellationToken) => db.CorePillars.AddAsync(corePillar, cancellationToken).AsTask();
+    public Task<Project?> FindByIdAsync(Guid id, CancellationToken cancellationToken) => db.Projects.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+    public Task AddAsync(Project Project, CancellationToken cancellationToken) => db.Projects.AddAsync(Project, cancellationToken).AsTask();
 }
+
+public s

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36429.23 d17.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.10.12224.181 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiroIntegration.API", "MiroIntegration.Api\MiroIntegration.API.csproj", "{F457393B-64D9-4F17-8F67-E61F5C58A1A2}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiroIntegration.Application", "MiroIntegration.Application\MiroIntegration.Application.csproj", "{2184A8D0-C473-4924-9597-6405D7F4C585}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiroIntegration.Infrastructure", "MiroIntegration.Infrastructure\MiroIntegration.Infrastructure.csproj", "{9E3F10A2-E6DF-4D68-9219-04E056627993}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "..\..\Shared\Shared\Shared.csproj", "{5EBA7C8A-FA2A-40AC-8F4D-4A50681BDE4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{9E3F10A2-E6DF-4D68-9219-04E056627993}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E3F10A2-E6DF-4D68-9219-04E056627993}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E3F10A2-E6DF-4D68-9219-04E056627993}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EBA7C8A-FA2A-40AC-8F4D-4A50681BDE4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EBA7C8A-FA2A-40AC-8F4D-4A50681BDE4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EBA7C8A-FA2A-40AC-8F4D-4A50681BDE4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EBA7C8A-FA2A-40AC-8F4D-4A50681BDE4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

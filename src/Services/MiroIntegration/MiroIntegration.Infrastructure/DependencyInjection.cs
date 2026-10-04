@@ -17,7 +17,7 @@ public static class DependencyInjection
         services.AddDbContext<MiroDbContext>(options => options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
         
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<ICorePillarRepository, CorePillarRepository>();
+        services.AddScoped<IProjectRepository, ProjectRepository>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ITokenService, JwtTokenService>();
         return services;
@@ -31,7 +31,8 @@ public static class DependencyInjection
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
+        })
+        .AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {

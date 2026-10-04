@@ -9,16 +9,12 @@ public interface IUserRepository
     Task AddAsync(User user, CancellationToken cancellationToken);
 }
 
-public interface ICorePillarRepository
+public interface IProjectRepository
 {
-    Task<CorePillar?> FindByIdAsync(Guid id, CancellationToken cancellationToken);
-    Task AddAsync(CorePillar corePillar, CancellationToken cancellationToken);
+    Task<Project?> FindByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task AddAsync(Project Project, CancellationToken cancellationToken);
 }
 
-public interface IUnitOfWork
-{
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken);
-}
 
 public interface IPasswordHasher
 {
@@ -31,7 +27,3 @@ public interface ITokenService
     string CreateToken(User user);
 }
 
-public interface IPdfGenerationQueue
-{
-    ValueTask EnqueueAsync(Guid corePillarId, CancellationToken cancellationToken);
-}
