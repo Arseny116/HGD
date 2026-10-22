@@ -1,67 +1,42 @@
-using FluentValidation;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+
+using MassTransit;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using static Shared.Contracts.Contracts;
 
 namespace MiroIntegration.Api;
 
 public static class DependencyInjection
 {
     public static IServiceCollection AddApiServices(this IServiceCollection services)
-    {
+    { 
         services.AddControllers();
         services.AddOpenApi();
         services.AddProblemDetails();
-        services.AddExceptionHandler<GlobalExceptionHandler>();
 
         return services;
     }
-}
 
-public sealed class GlobalExceptionHandler(
-    IProblemDetailsService problemDetailsService,
-    ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
-{
-    public async ValueTask<bool> TryHandleAsync(
-        HttpContext httpContext,
-        Exception exception,
-        CancellationToken cancellationToken)
+    public static IServiceCollection AddMassTransitService(this IServiceCollection services, IConfiguration configuration)
     {
-        var (statusCode, title, errors) = exception switch
+        services.AddMassTransit(x =>
         {
-            ValidationException validationException => (
-                StatusCodes.Status422UnprocessableEntity,
-                "Validation failed.",
-                validationException.Errors.Select(error => error.ErrorMessage).ToArray()),
-            UnauthorizedAccessException unauthorizedException => (
-                StatusCodes.Status401Unauthorized,
-                "Unauthorized.",
-                new[] { unauthorizedException.Message }),
-            KeyNotFoundException notFoundException => (
-                StatusCodes.Status404NotFound,
-                "Resource not found.",
-                new[] { notFoundException.Message }),
-            _ => (
-                StatusCodes.Status500InternalServerError,
-                "An unexpected error occurred.",
-                Array.Empty<string>())
-        };
-
-        if (statusCode == StatusCodes.Status500InternalServerError)
-            logger.LogError(exception, "Unhandled API exception");
-
-        httpContext.Response.StatusCode = statusCode;
-        problemDetailsService.WriteAsync(new ProblemDetailsContext
-        {
-            HttpContext = httpContext,
-            Exception = exception,
-            ProblemDetails = new ProblemDetails
+            x.UsingRabbitMq((context, cfg) =>
             {
-                Status = statusCode,
-                Title = title,
-                Detail = errors.Length == 0 ? null : string.Join(" ", errors)
-            }
-        });
+              cfg.Host(
+              configuration["RabbitMQ:Host"] ?? "localhost",
+              "/",
+              h =>
+              {
+                  h.Username(
+                      configuration["RabbitMQ:Username"] ?? "guest");
 
-        return true;
+                  h.Password(
+                      configuration["RabbitMQ:Password"] ?? "guest");
+              });
+            }
+            );
+
+        });
+        return services;
     }
 }

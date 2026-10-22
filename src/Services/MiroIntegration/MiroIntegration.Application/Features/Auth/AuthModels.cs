@@ -42,7 +42,7 @@ public sealed class AuthMappingProfile : Profile
     public AuthMappingProfile() => CreateMap<User, UserResponse>();
 }
 
-public sealed class RegisterHandler(IUserRepository users, IPasswordHasher hasher, ITokenService tokens, IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<RegisterCommand, AuthResponse>
+public sealed class RegisterHandler(IUserRepository users, IPasswordHasher hasher, ITokenService tokens, IMapper mapper) : IRequestHandler<RegisterCommand, AuthResponse>
 {
     public async Task<AuthResponse> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
@@ -50,9 +50,8 @@ public sealed class RegisterHandler(IUserRepository users, IPasswordHasher hashe
         if (await users.FindByEmailAsync(email, cancellationToken) is not null)
             throw new ValidationException("Email is already registered.");
 
-        var user = new User(request.Name.Trim(), email, hasher.Hash(request.Password));
+        var user = User.Create(request.Name.Trim(), email, hasher.Hash(request.Password)).Value;
         await users.AddAsync(user, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
         return new AuthResponse(tokens.CreateToken(user), mapper.Map<UserResponse>(user));
     }
 }

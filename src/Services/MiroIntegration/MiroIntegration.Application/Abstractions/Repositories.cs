@@ -15,7 +15,6 @@ public interface IProjectRepository
     Task AddAsync(Project Project, CancellationToken cancellationToken);
 }
 
-
 public interface IPasswordHasher
 {
     string Hash(string password);

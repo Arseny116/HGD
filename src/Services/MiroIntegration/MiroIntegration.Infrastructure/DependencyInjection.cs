@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Text;
 using MiroIntegration.Application.Abstractions;
 using MiroIntegration.Infrastructure.Persistence;
+using MiroIntegration.Infrastructure.Repositories;
+
 using MiroIntegration.Infrastructure.Security;
 
 namespace MiroIntegration.Infrastructure;
@@ -18,6 +20,24 @@ public static class DependencyInjection
         
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IProjectRepository, ProjectRepository>();
+        services.AddScoped<UserRepository>();
+        services.AddScoped<ProjectRepository>();
+        services.AddScoped<MetaBlockRepository>();
+        services.AddScoped<TechnicalSpecsBlockRepository>();
+        services.AddScoped<GameplayBlockRepository>();
+        services.AddScoped<GameplayOutlineItemRepository>();
+        services.AddScoped<DesignDocumentBlockRepository>();
+        services.AddScoped<DesignDefinitionRepository>();
+        services.AddScoped<FlowchartBlockRepository>();
+        services.AddScoped<FlowchartNodeRepository>();
+        services.AddScoped<FlowchartEdgeRepository>();
+        services.AddScoped<PlayerBlockRepository>();
+        services.AddScoped<PlayerDefinitionRepository>();
+        services.AddScoped<PlayerPropertyRepository>();
+        services.AddScoped<PlayerRewardRepository>();
+        services.AddScoped<UiBlockRepository>();
+        services.AddScoped<UiControlRepository>();
+        services.AddScoped<PdfRepository>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ITokenService, JwtTokenService>();
         return services;

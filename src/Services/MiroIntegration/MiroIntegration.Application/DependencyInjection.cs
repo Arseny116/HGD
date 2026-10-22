@@ -1,7 +1,6 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using MiroIntegration.Application.Behaviors;
 using MiroIntegration.Application.Features.Auth;
 
 namespace MiroIntegration.Application;
@@ -16,7 +15,6 @@ public static class DependencyInjection
         services.AddMediatR(configuration =>
         {
             configuration.RegisterServicesFromAssembly(applicationAssembly);
-            configuration.AddOpenBehavior(typeof(ValidationBehavior<,>));
         });
         services.AddValidatorsFromAssembly(applicationAssembly);
 
