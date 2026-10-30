@@ -12,11 +12,16 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.14" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.14" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MiroIntegration.Application\MiroIntegration.Application.csproj" />
     <ProjectReference Include="..\MiroIntegration.Domain\MiroIntegration.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

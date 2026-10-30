@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using MiroIntegration.Domain.Models;
-using MiroIntegration.Infrastructure.Persistence;
 
 namespace MiroIntegration.Infrastructure.Repositories;
 

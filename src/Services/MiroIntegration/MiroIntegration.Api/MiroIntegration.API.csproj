@@ -7,18 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit" Version="9.2.3" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="9.2.3" />
+    <PackageReference Include="MassTransit" Version="8.5.12" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.12" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.14" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.14">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+	 <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.6" />
+	 <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.6" />
+	 <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.6" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Shared\Shared\Shared.csproj" />
+	<ProjectReference Include="..\Shared\Shared\Shared.csproj" />
     <ProjectReference Include="..\MiroIntegration.Application\MiroIntegration.Application.csproj" />
     <ProjectReference Include="..\MiroIntegration.Infrastructure\MiroIntegration.Infrastructure.csproj" />
   </ItemGroup>

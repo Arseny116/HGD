@@ -4,6 +4,7 @@ namespace MiroIntegration.Domain.Models
 {
     public class GameplayBlock
     {
+        private GameplayBlock() { }
         private GameplayBlock(string description, List<GameplayOutlineItem> outline)
         {
             Id = Guid.NewGuid();

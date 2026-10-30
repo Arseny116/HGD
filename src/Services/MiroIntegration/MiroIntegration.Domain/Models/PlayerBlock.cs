@@ -4,6 +4,7 @@ namespace MiroIntegration.Domain.Models
 {
     public class PlayerBlock
     {
+        private PlayerBlock() { }
         private PlayerBlock(PlayerDefinition definition)
         {
             Id = Guid.NewGuid();

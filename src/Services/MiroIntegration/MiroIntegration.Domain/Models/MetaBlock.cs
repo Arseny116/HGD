@@ -4,6 +4,7 @@ namespace MiroIntegration.Domain.Models
 {
     public class MetaBlock
     {
+        private MetaBlock() { }
         private MetaBlock(string gameName, string genre, string gameElements, int playerCount)
         {
             Id = Guid.NewGuid();

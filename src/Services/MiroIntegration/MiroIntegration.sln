@@ -11,9 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiroIntegration.Application
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiroIntegration.Infrastructure", "MiroIntegration.Infrastructure\MiroIntegration.Infrastructure.csproj", "{9E3F10A2-E6DF-4D68-9219-04E056627993}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "..\..\Shared\Shared\Shared.csproj", "{5EBA7C8A-FA2A-40AC-8F4D-4A50681BDE4D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDFGenerate.API", "PDFGenerate\PDFGenerate.API.csproj", "{31A85C9E-94B3-46AB-B6CB-F3197D301CB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared\Shared.csproj", "{40EE0938-F52D-8934-C82A-22EC1C2343DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,14 +37,14 @@ Global
 		{9E3F10A2-E6DF-4D68-9219-04E056627993}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E3F10A2-E6DF-4D68-9219-04E056627993}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E3F10A2-E6DF-4D68-9219-04E056627993}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5EBA7C8A-FA2A-40AC-8F4D-4A50681BDE4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5EBA7C8A-FA2A-40AC-8F4D-4A50681BDE4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5EBA7C8A-FA2A-40AC-8F4D-4A50681BDE4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5EBA7C8A-FA2A-40AC-8F4D-4A50681BDE4D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{31A85C9E-94B3-46AB-B6CB-F3197D301CB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{31A85C9E-94B3-46AB-B6CB-F3197D301CB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31A85C9E-94B3-46AB-B6CB-F3197D301CB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31A85C9E-94B3-46AB-B6CB-F3197D301CB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40EE0938-F52D-8934-C82A-22EC1C2343DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40EE0938-F52D-8934-C82A-22EC1C2343DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40EE0938-F52D-8934-C82A-22EC1C2343DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40EE0938-F52D-8934-C82A-22EC1C2343DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

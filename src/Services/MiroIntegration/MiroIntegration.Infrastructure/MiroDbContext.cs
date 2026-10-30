@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MiroIntegration.Domain.Models;
 
-namespace MiroIntegration.Infrastructure.Persistence;
+namespace MiroIntegration.Infrastructure;
 
 public sealed class MiroDbContext(DbContextOptions<MiroDbContext> options): DbContext(options)
 {
@@ -24,6 +24,6 @@ public sealed class MiroDbContext(DbContextOptions<MiroDbContext> options): DbCo
     public DbSet<UiControl> UiControls => Set<UiControl>();
 
     public DbSet<Pdf> Pdfs => Set<Pdf>();
-
+  
     
 }

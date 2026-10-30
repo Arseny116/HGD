@@ -15,7 +15,7 @@ namespace Shared.Contracts
              Guid UserId,
              string FileUrl,
              string FileName,
-              DateTime CompletedAt
+             DateTime CompletedAt
             );
 
         public record PdfGenerationFailed(

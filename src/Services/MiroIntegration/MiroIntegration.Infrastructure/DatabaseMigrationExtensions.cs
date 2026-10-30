@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using MiroIntegration.Infrastructure.Persistence;
 
 namespace MiroIntegration.Infrastructure;
 

@@ -4,6 +4,7 @@ namespace MiroIntegration.Domain.Models
 {
     public class TechnicalSpecsBlock
     {
+        private TechnicalSpecsBlock() { }
         private TechnicalSpecsBlock(string technicalForm, string view, List<string> platforms, List<string> languages)
         {
             Id = Guid.NewGuid();
@@ -57,8 +58,9 @@ namespace MiroIntegration.Domain.Models
             if (technicalForm is not ("2D" or "3D"))
                 return Result.Failure("TechnicalForm must be 2D or 3D.");
 
-            if (platforms is null || platforms.Count == 0)
-                return Result.Failure("At least one platform is required.");
+            if (languages is null || languages.Count == 0)
+                return Result.Failure(
+                    "At least one language is required.");
 
             TechnicalForm = technicalForm;
             View = view;

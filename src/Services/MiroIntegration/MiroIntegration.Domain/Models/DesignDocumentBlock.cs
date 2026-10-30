@@ -4,6 +4,8 @@ namespace MiroIntegration.Domain.Models
 {
     public class DesignDocumentBlock
     {
+        private DesignDocumentBlock() { } // Для EF Core
+
         private DesignDocumentBlock(string guidelines, List<DesignDefinition> definitions)
         {
             Id = Guid.NewGuid();

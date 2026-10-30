@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Services\MiroIntegration\MiroIntegration.Domain\MiroIntegration.Domain.csproj" />
+	  <ProjectReference Include="..\..\MiroIntegration.Domain\MiroIntegration.Domain.csproj" />
   </ItemGroup>
 
 </Project>

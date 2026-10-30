@@ -17,10 +17,6 @@ namespace MiroIntegration.Domain.Models
 
         public Project Project { get; private set; } = null!;
 
-      
-
-        
-
         private Pdf(Guid jobId, Guid projectId, string fileName, string fileUrl)
         {
             Id = Guid.NewGuid();

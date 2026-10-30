@@ -4,6 +4,7 @@ namespace MiroIntegration.Domain.Models
 {
     public class FlowchartBlock
     {
+        private FlowchartBlock() { }
         private FlowchartBlock(List<FlowchartNode> nodes, List<FlowchartEdge> edges)
         {
             Id = Guid.NewGuid();
@@ -18,16 +19,43 @@ namespace MiroIntegration.Domain.Models
         public List<FlowchartEdge> Edges { get; private set; } = new();
 
         public static Result<FlowchartBlock> Create(
-            List<FlowchartNode> nodes,
-            List<FlowchartEdge> edges)
+                List<FlowchartNode> nodes,
+                List<FlowchartEdge> edges)
         {
             if (nodes is null || nodes.Count == 0)
-                return Result.Failure<FlowchartBlock>("At least one node is required.");
+                return Result.Failure<FlowchartBlock>(
+                    "At least one node is required.");
 
             if (edges is null)
-                return Result.Failure<FlowchartBlock>("Edges cannot be null.");
+                return Result.Failure<FlowchartBlock>(
+                    "Edges cannot be null.");
 
-            return Result.Success(new FlowchartBlock(nodes, edges));
+            if (nodes.Any(n => n is null))
+                return Result.Failure<FlowchartBlock>(
+                    "Nodes cannot contain null elements.");
+
+            if (edges.Any(e => e is null))
+                return Result.Failure<FlowchartBlock>(
+                    "Edges cannot contain null elements.");
+
+            var nodeIds = nodes.Select(n => n.Id).ToHashSet();
+
+            if (nodeIds.Count != nodes.Count)
+                return Result.Failure<FlowchartBlock>(
+                    "Duplicate node IDs are not allowed.");
+
+            foreach (var edge in edges)
+            {
+                if (!nodeIds.Contains(edge.FromNodeId) ||
+                    !nodeIds.Contains(edge.ToNodeId))
+                {
+                    return Result.Failure<FlowchartBlock>(
+                        "Edge references non-existing node.");
+                }
+            }
+
+            return Result.Success(
+                new FlowchartBlock(nodes, edges));
         }
 
         public Result AddNode(FlowchartNode node)

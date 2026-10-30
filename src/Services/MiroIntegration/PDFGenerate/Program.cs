@@ -1,50 +1,52 @@
-    using MassTransit;
+using MassTransit;
+using PdfWorker.Services;
 
-    var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
+builder.Services.AddScoped<PdfGenerator>();
+builder.Services.AddControllers();
+builder.Services.AddOpenApi();
+IConfiguration configuration = builder.Configuration;
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<PdfGenerationConsumer>();
 
 
-    builder.Services.AddControllers();
-    builder.Services.AddOpenApi();
-    IConfiguration configuration = builder.Configuration;
-    builder.Services.AddMassTransit(x =>
+    //context для доступа из di(подтягивает все зависимости обработчика) , cfg для подключения к рэбиту 
+    x.UsingRabbitMq((context, cfg) =>
     {
-        x.AddConsumer<PdfGenerationConsumer>();
-
-
-        //context для доступа из di(подтягивает все зависимости обработчика) , cfg для подключения к рэбиту 
-        x.UsingRabbitMq((context, cfg) =>
-        {
-            cfg.Host(
-                configuration["RabbitMQ:Host"] ?? "localhost",
-                "/",
-                h =>
-                {
-                    h.Username(
-                        configuration["RabbitMQ:Username"] ?? "guest");
-
-                    h.Password(
-                        configuration["RabbitMQ:Password"] ?? "guest");
-                });
-
-            cfg.ReceiveEndpoint("pdf-generation-queue", e =>
+        cfg.Host(
+            configuration["RabbitMQ:Host"] ?? "localhost",
+            "/",
+            h =>
             {
-                e.ConfigureConsumer<PdfGenerationConsumer>(context);
+                h.Username(
+                    configuration["RabbitMQ:Username"] ?? "guest");
+
+                h.Password(
+                    configuration["RabbitMQ:Password"] ?? "guest");
             });
+
+        cfg.ReceiveEndpoint("pdf-generation-queue", e =>
+        {
+            e.ConfigureConsumer<PdfGenerationConsumer>(context);
         });
     });
+});
 
-    var app = builder.Build();
+var app = builder.Build();
 
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        app.MapOpenApi();
-    }
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
 
-    app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
-    app.UseAuthorization();
+app.UseAuthorization();
 
-    app.MapControllers();
+app.MapControllers();
 
-    app.Run();
+app.Run();

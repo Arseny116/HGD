@@ -1,6 +1,7 @@
 
 using MassTransit;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using MiroIntegration.Services;
 using static Shared.Contracts.Contracts;
 
 namespace MiroIntegration.Api;
@@ -12,6 +13,8 @@ public static class DependencyInjection
         services.AddControllers();
         services.AddOpenApi();
         services.AddProblemDetails();
+        services.AddScoped<PdfNotifier>();
+        services.AddSignalR();
 
         return services;
     }

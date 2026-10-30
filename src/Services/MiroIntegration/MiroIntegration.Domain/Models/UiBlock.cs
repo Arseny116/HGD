@@ -4,6 +4,7 @@ namespace MiroIntegration.Domain.Models
 {
     public class UiBlock
     {
+        private UiBlock() { }
         private UiBlock(string? layoutImageUrl, string? layoutDescription)
         {
             Id = Guid.NewGuid();
