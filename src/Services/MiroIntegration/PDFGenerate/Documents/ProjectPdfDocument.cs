@@ -1,14 +1,14 @@
-﻿using MiroIntegration.Domain.Models;
-using QuestPDF.Fluent;
+﻿using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using Shared.Contracts;
 
 // Замени на namespace, в котором объявлен Project.
 // using MiroIntegration.Domain.Entities;
 
 namespace PdfWorker.Documents;
 
-public sealed class ProjectPdfDocument(Project project) : IDocument
+public sealed class ProjectPdfDocument(ProjectPdfData project) : IDocument
 {
     public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
 
@@ -111,7 +111,7 @@ public sealed class ProjectPdfDocument(Project project) : IDocument
                             .Bold();
 
                         foreach (var item in (project.Gameplay.Outline
-                                     ?? Enumerable.Empty<GameplayOutlineItem>())
+                                      ?? Enumerable.Empty<GameplayOutlineItemDto>())
                                  .OrderBy(x => x.Order))
                         {
                             content.Item().PaddingLeft(10)
@@ -136,7 +136,7 @@ public sealed class ProjectPdfDocument(Project project) : IDocument
 
                         foreach (var definition in
                                  project.DesignDocument.Definitions
-                                 ?? Enumerable.Empty<DesignDefinition>())
+                                 ?? Enumerable.Empty<DesignDefinitionDto>())
                         {
                             content.Item().PaddingTop(4)
                                 .Text($"{definition.Key}: {definition.Value}");
@@ -153,7 +153,7 @@ public sealed class ProjectPdfDocument(Project project) : IDocument
                         content.Item().Text("Flowchart nodes").Bold();
 
                         foreach (var node in project.Flowchart.Nodes
-                                     ?? Enumerable.Empty<FlowchartNode>())
+                                      ?? Enumerable.Empty<FlowchartNodeDto>())
                         {
                             content.Item().PaddingTop(4)
                                 .Text(
@@ -166,7 +166,7 @@ public sealed class ProjectPdfDocument(Project project) : IDocument
                             .Bold();
 
                         foreach (var edge in project.Flowchart.Edges
-                                     ?? Enumerable.Empty<FlowchartEdge>())
+                                      ?? Enumerable.Empty<FlowchartEdgeDto>())
                         {
                             content.Item().PaddingTop(4)
                                 .Text(
@@ -206,7 +206,7 @@ public sealed class ProjectPdfDocument(Project project) : IDocument
                             .Bold();
 
                         foreach (var property in project.Player.Properties
-                                     ?? Enumerable.Empty<PlayerProperty>())
+                                      ?? Enumerable.Empty<PlayerPropertyDto>())
                         {
                             content.Item().PaddingTop(4)
                                 .Text($"{property.Name}: {property.Description}");
@@ -223,7 +223,7 @@ public sealed class ProjectPdfDocument(Project project) : IDocument
                             .Bold();
 
                         foreach (var reward in project.Player.Rewards
-                                     ?? Enumerable.Empty<PlayerReward>())
+                                      ?? Enumerable.Empty<PlayerRewardDto>())
                         {
                             content.Item().PaddingTop(4)
                                 .Text(
@@ -261,7 +261,7 @@ public sealed class ProjectPdfDocument(Project project) : IDocument
                             .Bold();
 
                         foreach (var control in project.Ui.Controls
-                                     ?? Enumerable.Empty<UiControl>())
+                                      ?? Enumerable.Empty<UiControlDto>())
                         {
                             content.Item().PaddingTop(4)
                                 .Text(
@@ -346,7 +346,7 @@ public sealed class ProjectPdfDocument(Project project) : IDocument
     }
 
     private static string GetNodeLabel(
-        Project project,
+        ProjectPdfData project,
         Guid nodeId)
     {
         var node = project.Flowchart?.Nodes?

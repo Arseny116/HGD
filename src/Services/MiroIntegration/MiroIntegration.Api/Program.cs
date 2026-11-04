@@ -19,7 +19,8 @@ namespace MiroIntegration
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
             builder.Services.AddSecurity(builder.Configuration);
-
+            IConfiguration configuration = builder.Configuration;
+            builder.Services.AddMassTransitService(configuration);
             var app = builder.Build();
 
             app.Services.MigrateDatabase();

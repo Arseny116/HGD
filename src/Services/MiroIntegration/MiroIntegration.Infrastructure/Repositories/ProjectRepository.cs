@@ -27,7 +27,28 @@ namespace MiroIntegration.Infrastructure.Repositories
 
         public async Task<Project?> GetByIdAsync(CancellationToken ct, Guid id)
         {
-            return await db.Projects.FirstOrDefaultAsync(p => p.Id == id, ct);
+            return await db.Projects
+                    .AsSplitQuery()
+                    .Include(p => p.Meta)
+                    .Include(p => p.TechnicalSpecs)
+                    .Include(p => p.Gameplay)
+                        .ThenInclude(g => g.Outline)
+                    .Include(p => p.DesignDocument)
+                        .ThenInclude(d => d.Definitions)
+                    .Include(p => p.Flowchart)
+                        .ThenInclude(f => f.Nodes)
+                    .Include(p => p.Flowchart)
+                        .ThenInclude(f => f.Edges)
+                    .Include(p => p.Player)
+                        .ThenInclude(pl => pl.Definition)
+                    .Include(p => p.Player)
+                        .ThenInclude(pl => pl.Properties)
+                    .Include(p => p.Player)
+                        .ThenInclude(pl => pl.Rewards)
+                    .Include(p => p.Ui)
+                        .ThenInclude(u => u.Controls)
+                    .Include(p => p.PdfScope)
+                    .FirstOrDefaultAsync(p => p.Id == id, ct); ;
         }
 
         public async Task DeleteAsync(CancellationToken ct, Guid id)
@@ -43,7 +64,7 @@ namespace MiroIntegration.Infrastructure.Repositories
             await db.SaveChangesAsync(cancellationToken);
         }
 
-       
+
 
 
 

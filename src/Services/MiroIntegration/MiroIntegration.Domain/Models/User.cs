@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using System.Text.Json.Serialization;
 
 namespace MiroIntegration.Domain.Models;
 
@@ -16,6 +17,7 @@ public sealed class User
     }
 
     public Guid Id { get; private set; }
+    [JsonIgnore]
     public List<Project> Projects { get; private set; } = new List<Project>();
 
     public string Name { get; private set; } = string.Empty;

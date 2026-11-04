@@ -1,14 +1,12 @@
-﻿using MiroIntegration.Domain.Models;
-
-namespace Shared.Contracts
+﻿namespace Shared.Contracts
 {
     public class Contracts
     {
         public record PdfGenerationRequest(
             Guid UserId,
             Guid JobId,
-            string FileName,
-            Project Content
+             string FileName,
+             ProjectPdfData Content
          );
         public record PdfGenerationCompleted(
              Guid JobId,

@@ -1,14 +1,31 @@
 ﻿using MassTransit;
+using PdfWorker.Services.Storage;
 using static Shared.Contracts.Contracts;
+
+namespace PdfWorker.Services;
 
 public sealed class PdfGenerationConsumer : IConsumer<PdfGenerationRequest>
 {
-    public async Task Consume(
-        ConsumeContext<PdfGenerationRequest> context)
+    private readonly PdfGenerator _pdfGenerator;
+    private readonly S3FileStorage _fileStorage;
+
+    public PdfGenerationConsumer(PdfGenerator pdfGenerator,S3FileStorage fileStorage)
+    {
+        _pdfGenerator = pdfGenerator;
+        _fileStorage = fileStorage;
+    }
+
+    public async Task Consume(ConsumeContext<PdfGenerationRequest> context)
     {
         var request = context.Message;
 
+        var pdfBytes = _pdfGenerator.Generate(request);
 
-        await Task.CompletedTask;
+        var objectKey = $"{request.JobId}.pdf";
+
+        await _fileStorage.UploadAsync(
+            pdfBytes,
+            objectKey,
+            context.CancellationToken);
     }
 }

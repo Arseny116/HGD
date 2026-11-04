@@ -1,7 +1,9 @@
 using MassTransit;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiroIntegration.Application.Abstractions;
+using Shared.Contracts;
 using static Shared.Contracts.Contracts;
 
 
@@ -18,6 +20,7 @@ public sealed class PdfGeneratorController : ApiControllerBase
         [FromQuery] Guid id,
         [FromServices] ISendEndpointProvider sendEndpoint,
         [FromServices] IProjectService ps,
+        [FromServices] IMapper mapper,
         CancellationToken cancellationToken)
     {
         var project = await ps.GetProjectAsync(id, cancellationToken);
@@ -28,12 +31,16 @@ public sealed class PdfGeneratorController : ApiControllerBase
         }
 
         var taskId = Guid.NewGuid();
-
+            
         var endpoint = await sendEndpoint.GetSendEndpoint(
             new Uri("queue:pdf-generation-queue"));
 
         await endpoint.Send(
-            new PdfGenerationRequest(CurrentUserId,taskId,project.Name,project),
+            new PdfGenerationRequest(
+                CurrentUserId,
+                taskId,
+                project.Name,
+                mapper.Map<ProjectPdfData>(project)),
             cancellationToken);
 
         return Accepted(new
