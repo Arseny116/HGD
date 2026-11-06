@@ -11,6 +11,13 @@ namespace MiroIntegration.Infrastructure.Repositories
             return await db.Projects.ToListAsync(ct);
         }
 
+        public async Task<List<Project>> ListByUserIdAsync(Guid userId, CancellationToken cancellationToken)
+        {
+            return await db.Projects
+                .Where(project => project.UserId == userId)
+                .ToListAsync(cancellationToken);
+        }
+
         public async Task<Project> UpdateAsync(CancellationToken ct, Project project)
         {
             db.Projects.Update(project);
@@ -25,7 +32,7 @@ namespace MiroIntegration.Infrastructure.Repositories
             return project;
         }
 
-        public async Task<Project?> GetByIdAsync(CancellationToken ct, Guid id)
+        public async Task<Project?> GetByIdAsync(CancellationToken ct, Guid id, Guid userId)
         {
             return await db.Projects
                     .AsSplitQuery()
@@ -48,7 +55,7 @@ namespace MiroIntegration.Infrastructure.Repositories
                     .Include(p => p.Ui)
                         .ThenInclude(u => u.Controls)
                     .Include(p => p.PdfScope)
-                    .FirstOrDefaultAsync(p => p.Id == id, ct); ;
+                    .FirstOrDefaultAsync(p => p.Id == id && p.UserId == userId, ct);
         }
 
         public async Task DeleteAsync(CancellationToken ct, Guid id)
@@ -56,7 +63,13 @@ namespace MiroIntegration.Infrastructure.Repositories
             await db.Projects.Where(x => x.Id == id).ExecuteDeleteAsync(ct);
         }
 
-        public Task<Project?> FindByIdAsync(Guid id, CancellationToken cancellationToken) => GetByIdAsync(cancellationToken, id);
+        public Task<Project?> FindByIdAsync(Guid id, Guid userId, CancellationToken cancellationToken) => GetByIdAsync(cancellationToken, id, userId);
+
+        async Task IProjectRepository.UpdateAsync(Project project, CancellationToken cancellationToken)
+        {
+            db.Projects.Update(project);
+            await db.SaveChangesAsync(cancellationToken);
+        }
 
         public async Task AddAsync(Project project, CancellationToken cancellationToken)
         {

@@ -241,6 +241,10 @@ namespace MiroIntegration.Infrastructure.Migrations
                     b.Property<Guid>("JobId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ObjectKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("uuid");
 

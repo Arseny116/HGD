@@ -9,10 +9,105 @@ public sealed class ProjectService(IProjectRepository projectRepository) : IProj
 {
     public async Task<Project?> GetProjectAsync(
         Guid id,
+        Guid userId,
         CancellationToken cancellationToken)
     {
-        return await projectRepository.FindByIdAsync(id, cancellationToken);
+        return await projectRepository.FindByIdAsync(id, userId, cancellationToken);
     }
+
+    public async Task<IReadOnlyList<Project>> GetProjectsAsync(
+        Guid userId,
+        CancellationToken cancellationToken)
+    {
+        return await projectRepository.ListByUserIdAsync(userId, cancellationToken);
+    }
+
+    public Task<Result> UpdateMetaAsync(
+        Guid projectId,
+        Guid userId,
+        MetaBlockDto request,
+        CancellationToken cancellationToken) => UpdateBlockAsync(
+            projectId,
+            userId,
+            () => MetaBlock.Create(
+                request.GameName,
+                request.Genre,
+                request.GameElements,
+                request.PlayerCount,
+                request.CoverImageUrl),
+            (project, block) => project.SetMeta(block),
+            cancellationToken);
+
+    public Task<Result> UpdateTechnicalSpecsAsync(
+        Guid projectId,
+        Guid userId,
+        TechnicalSpecsBlockDto request,
+        CancellationToken cancellationToken) => UpdateBlockAsync(
+            projectId,
+            userId,
+            () => TechnicalSpecsBlock.Create(
+                request.TechnicalForm,
+                request.View,
+                request.Platforms,
+                request.Languages,
+                request.ReferenceImageUrl),
+            (project, block) => project.SetTechnicalSpecs(block),
+            cancellationToken);
+
+    public Task<Result> UpdateGameplayAsync(
+        Guid projectId,
+        Guid userId,
+        GameplayBlockDto request,
+        CancellationToken cancellationToken) => UpdateBlockAsync(
+            projectId,
+            userId,
+            () => CreateGameplayBlock(request),
+            (project, block) => project.SetGameplay(block),
+            cancellationToken);
+
+    public Task<Result> UpdateDesignDocumentAsync(
+        Guid projectId,
+        Guid userId,
+        DesignDocumentBlockDto request,
+        CancellationToken cancellationToken) => UpdateBlockAsync(
+            projectId,
+            userId,
+            () => CreateDesignDocumentBlock(request),
+            (project, block) => project.SetDesignDocument(block),
+            cancellationToken);
+
+    public Task<Result> UpdateFlowchartAsync(
+        Guid projectId,
+        Guid userId,
+        FlowchartBlockDto request,
+        CancellationToken cancellationToken) => UpdateBlockAsync(
+            projectId,
+            userId,
+            () => CreateFlowchartBlock(request),
+            (project, block) => project.SetFlowchart(block),
+            cancellationToken);
+
+    public Task<Result> UpdatePlayerAsync(
+        Guid projectId,
+        Guid userId,
+        PlayerBlockDto request,
+        CancellationToken cancellationToken) => UpdateBlockAsync(
+            projectId,
+            userId,
+            () => CreatePlayerBlock(request),
+            (project, block) => project.SetPlayer(block),
+            cancellationToken);
+
+    public Task<Result> UpdateUiAsync(
+        Guid projectId,
+        Guid userId,
+        UiBlockDto request,
+        CancellationToken cancellationToken) => UpdateBlockAsync(
+            projectId,
+            userId,
+            () => CreateUiBlock(request),
+            (project, block) => project.SetUi(block),
+            cancellationToken);
 
     public async Task<Result<Guid>> CreateProjectAsync(
         Guid userId,
@@ -262,5 +357,208 @@ public sealed class ProjectService(IProjectRepository projectRepository) : IProj
         await projectRepository.AddAsync(project, ct);
 
         return Result.Success(project.Id);
+    }
+
+    private async Task<Result> UpdateBlockAsync<TBlock>(
+        Guid projectId,
+        Guid userId,
+        Func<Result<TBlock>> createBlock,
+        Func<Project, TBlock, Result> applyBlock,
+        CancellationToken cancellationToken)
+    {
+        var blockResult = createBlock();
+        if (blockResult.IsFailure)
+            return Result.Failure(blockResult.Error);
+
+        var project = await projectRepository.FindByIdAsync(
+            projectId,
+            userId,
+            cancellationToken);
+
+        if (project is null)
+            return Result.Failure("Project not found.");
+
+        var applyResult = applyBlock(project, blockResult.Value);
+        if (applyResult.IsFailure)
+            return applyResult;
+
+        await projectRepository.UpdateAsync(project, cancellationToken);
+        return Result.Success();
+    }
+
+    private static Result<GameplayBlock> CreateGameplayBlock(GameplayBlockDto request)
+    {
+        var outline = new List<GameplayOutlineItem>();
+
+        foreach (var item in request.Outline)
+        {
+            var itemResult = GameplayOutlineItem.Create(item.Text, item.Order);
+            if (itemResult.IsFailure)
+                return Result.Failure<GameplayBlock>(itemResult.Error);
+
+            outline.Add(itemResult.Value);
+        }
+
+        return GameplayBlock.Create(
+            request.Description,
+            outline,
+            request.ReferenceImageUrl);
+    }
+
+    private static Result<DesignDocumentBlock> CreateDesignDocumentBlock(
+        DesignDocumentBlockDto request)
+    {
+        var definitions = new List<DesignDefinition>();
+
+        foreach (var definition in request.Definitions)
+        {
+            var definitionResult = DesignDefinition.Create(
+                definition.Key,
+                definition.Value);
+
+            if (definitionResult.IsFailure)
+                return Result.Failure<DesignDocumentBlock>(definitionResult.Error);
+
+            definitions.Add(definitionResult.Value);
+        }
+
+        return DesignDocumentBlock.Create(request.Guidelines, definitions);
+    }
+
+    private static Result<FlowchartBlock> CreateFlowchartBlock(
+        FlowchartBlockDto request)
+    {
+        var nodes = new List<FlowchartNode>();
+        var nodeIds = new Dictionary<Guid, Guid>();
+
+        foreach (var nodeDto in request.Nodes)
+        {
+            if (nodeIds.ContainsKey(nodeDto.ClientId))
+            {
+                return Result.Failure<FlowchartBlock>(
+                    $"Duplicate flowchart node ClientId: {nodeDto.ClientId}");
+            }
+
+            var nodeResult = FlowchartNode.Create(
+                nodeDto.Label,
+                nodeDto.Type,
+                nodeDto.X,
+                nodeDto.Y,
+                nodeDto.Color);
+
+            if (nodeResult.IsFailure)
+                return Result.Failure<FlowchartBlock>(nodeResult.Error);
+
+            nodes.Add(nodeResult.Value);
+            nodeIds.Add(nodeDto.ClientId, nodeResult.Value.Id);
+        }
+
+        var edges = new List<FlowchartEdge>();
+
+        foreach (var edgeDto in request.Edges)
+        {
+            if (!nodeIds.TryGetValue(edgeDto.FromNodeClientId, out var fromNodeId))
+            {
+                return Result.Failure<FlowchartBlock>(
+                    $"Source flowchart node not found: {edgeDto.FromNodeClientId}");
+            }
+
+            if (!nodeIds.TryGetValue(edgeDto.ToNodeClientId, out var toNodeId))
+            {
+                return Result.Failure<FlowchartBlock>(
+                    $"Target flowchart node not found: {edgeDto.ToNodeClientId}");
+            }
+
+            var edgeResult = FlowchartEdge.Create(
+                fromNodeId,
+                toNodeId,
+                edgeDto.Label);
+
+            if (edgeResult.IsFailure)
+                return Result.Failure<FlowchartBlock>(edgeResult.Error);
+
+            edges.Add(edgeResult.Value);
+        }
+
+        return FlowchartBlock.Create(nodes, edges);
+    }
+
+    private static Result<PlayerBlock> CreatePlayerBlock(PlayerBlockDto request)
+    {
+        var definitionResult = PlayerDefinition.Create(
+            request.Definition.Health,
+            request.Definition.Weapons,
+            request.Definition.Actions);
+
+        if (definitionResult.IsFailure)
+            return Result.Failure<PlayerBlock>(definitionResult.Error);
+
+        var playerResult = PlayerBlock.Create(
+            definitionResult.Value,
+            request.ReferenceImageUrl);
+
+        if (playerResult.IsFailure)
+            return playerResult;
+
+        foreach (var propertyDto in request.Properties)
+        {
+            var propertyResult = PlayerProperty.Create(
+                propertyDto.Name,
+                propertyDto.Description,
+                propertyDto.Feedback);
+
+            if (propertyResult.IsFailure)
+                return Result.Failure<PlayerBlock>(propertyResult.Error);
+
+            var addResult = playerResult.Value.AddProperty(propertyResult.Value);
+            if (addResult.IsFailure)
+                return Result.Failure<PlayerBlock>(addResult.Error);
+        }
+
+        foreach (var rewardDto in request.Rewards)
+        {
+            var rewardResult = PlayerReward.Create(
+                rewardDto.Name,
+                rewardDto.Effect,
+                rewardDto.Type,
+                rewardDto.IconUrl);
+
+            if (rewardResult.IsFailure)
+                return Result.Failure<PlayerBlock>(rewardResult.Error);
+
+            var addResult = playerResult.Value.AddReward(rewardResult.Value);
+            if (addResult.IsFailure)
+                return Result.Failure<PlayerBlock>(addResult.Error);
+        }
+
+        return playerResult;
+    }
+
+    private static Result<UiBlock> CreateUiBlock(UiBlockDto request)
+    {
+        var uiResult = UiBlock.Create(
+            request.LayoutImageUrl,
+            request.LayoutDescription);
+
+        if (uiResult.IsFailure)
+            return uiResult;
+
+        foreach (var controlDto in request.Controls)
+        {
+            var controlResult = UiControl.Create(
+                controlDto.Name,
+                controlDto.Action,
+                controlDto.Type,
+                controlDto.IconUrl);
+
+            if (controlResult.IsFailure)
+                return Result.Failure<UiBlock>(controlResult.Error);
+
+            var addResult = uiResult.Value.AddControl(controlResult.Value);
+            if (addResult.IsFailure)
+                return Result.Failure<UiBlock>(addResult.Error);
+        }
+
+        return uiResult;
     }
 }

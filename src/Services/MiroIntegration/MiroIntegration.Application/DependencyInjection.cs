@@ -1,7 +1,9 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using MiroIntegration.Application.Abstractions;
 using MiroIntegration.Application.Features.Auth;
+using MiroIntegration.Application.Features.Pdf;
 
 namespace MiroIntegration.Application;
 
@@ -17,6 +19,7 @@ public static class DependencyInjection
             configuration.RegisterServicesFromAssembly(applicationAssembly);
         });
         services.AddValidatorsFromAssembly(applicationAssembly);
+        services.AddScoped<IPdfService, PdfServiceResult>();
 
         return services;
     }

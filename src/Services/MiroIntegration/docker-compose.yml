@@ -46,10 +46,17 @@ services:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
       ASPNETCORE_HTTP_PORTS: "8080"
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      JWT__Key: ${JWT_KEY}
       RabbitMQ__Host: rabbitmq
       RabbitMQ__Port: "5672"
       RabbitMQ__Username: ${RABBITMQ_USER}
       RabbitMQ__Password: ${RABBITMQ_PASSWORD}
+      S3__ServiceUrl: http://seaweedfs:8333
+      S3__AccessKey: ${S3_ACCESS_KEY}
+      S3__SecretKey: ${S3_SECRET_KEY}
+      S3__BucketName: ${S3_BUCKET}
+      S3__Region: us-east-1
+      S3__ForcePathStyle: "true"
     ports:
       - "${MIRO_PORT:-8080}:8080"
     depends_on:
@@ -57,6 +64,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      seaweedfs:
+        condition: service_started
 
   pdfgenerate:
     container_name: gdd-pdfgenerate

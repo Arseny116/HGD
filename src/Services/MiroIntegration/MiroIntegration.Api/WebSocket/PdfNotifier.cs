@@ -21,4 +21,20 @@ public sealed class PdfNotifier(IHubContext<NotificationHub> hubContext)
                 status = "Completed"
             });
     }
+
+    public Task NotifyPdfFailedAsync(
+        Guid userId,
+        Guid taskId,
+        string reason)
+    {
+        return hubContext
+            .Clients
+            .User(userId.ToString())
+            .SendAsync("PdfFailed", new
+            {
+                taskId,
+                reason,
+                status = "Failed"
+            });
+    }
 }

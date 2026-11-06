@@ -17,7 +17,25 @@ public sealed class S3FileStorage
         _s3Client = s3Client;
         _options = options.Value;
     }
-    public async Task UploadAsync(
+
+
+    public string GetDownloadUrl(string objectKey)
+    {
+        var request = new GetPreSignedUrlRequest
+        {
+            BucketName = _options.BucketName,
+            Key = objectKey,
+            Verb = HttpVerb.GET,
+            Expires = DateTime.UtcNow.AddMinutes(15)
+        };
+
+        return _s3Client.GetPreSignedURL(request);
+    }
+
+
+
+
+    public async Task<PutObjectResponse> UploadAsync(
         byte[] file,
         string objectKey,
         CancellationToken cancellationToken = default)
@@ -32,6 +50,7 @@ public sealed class S3FileStorage
             ContentType = "application/pdf"
         };
 
-        await _s3Client.PutObjectAsync(request, cancellationToken);
+        var x = await _s3Client.PutObjectAsync(request, cancellationToken);
+        return x;
     }
 }

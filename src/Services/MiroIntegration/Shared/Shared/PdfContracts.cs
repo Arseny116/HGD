@@ -1,5 +1,13 @@
 namespace Shared.Contracts;
 
+public sealed record PdfDto(
+    Guid Id,
+    Guid JobId,
+    Guid ProjectId,
+    string FileName,
+    string Status,
+    string? FileUrl);
+
 public sealed class ProjectPdfData
 {
     public Guid Id { get; init; }
