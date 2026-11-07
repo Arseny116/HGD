@@ -1,0 +1,8 @@
+services:
+  mirointegration-tests:
+    profiles: ["tests"]
+    build:
+      context: .
+      dockerfile: Dockerfile.tests
+    environment:
+      ASPNETCORE_ENVIRONMENT: Testing

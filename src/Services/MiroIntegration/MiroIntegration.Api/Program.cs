@@ -7,7 +7,7 @@ using MiroIntegration.Infrastructure;
 
 namespace MiroIntegration
 {
-    public class Program
+    public partial class Program
     {
         public static void Main(string[] args)
         {
@@ -20,10 +20,12 @@ namespace MiroIntegration
             builder.Services.AddInfrastructure(builder.Configuration);
             builder.Services.AddSecurity(builder.Configuration);
             IConfiguration configuration = builder.Configuration;
-            builder.Services.AddMassTransitService(configuration);
+            if (!builder.Environment.IsEnvironment("Testing"))
+                builder.Services.AddMassTransitService(configuration);
             var app = builder.Build();
 
-            app.Services.MigrateDatabase();
+            if (!app.Environment.IsEnvironment("Testing"))
+                app.Services.MigrateDatabase();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
